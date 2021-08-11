@@ -6,16 +6,20 @@ Created on Sun Aug  8 23:34:43 2021
 """
 
 class Player:
-    def __init__(self, PlayerName, PlayerDict, CurrentGW):
-        self.Position = PlayerDict[PlayerName][CurrentGW][1]
-        self.Team = PlayerDict[PlayerName][CurrentGW][2]
-        self.Targets()
-        self.GWs()
+    def __init__(self, PlayerName, PlayerDict, CurrentGW, Range, TargetDict, Attributes):
+        self.Position = PlayerDict[PlayerName][CurrentGW]['position']
+        self.Team = PlayerDict[PlayerName][CurrentGW]['team']
+        self.Value = PlayerDict[PlayerName][CurrentGW+1]['value']/10
+        #Ultimately self.Value might come from different file!
+        self.Targets(TargetDict, PlayerName, PlayerDict, CurrentGW)
+        self.GWs(Range, PlayerName, PlayerDict, Attributes)
 
     
-    def Targets(self, TargetDict):
+    def Targets(self, TargetDict, PlayerName, PlayerDict, CurrentGW):
         for target in TargetDict[self.Position]:
-            setattr(self, 'target_'+target, PlayerDict[PlayerName][CurrentGW][1])
-            ###Make pd.SERIES not lists!!
-    def GWs(self, range):
-        for 
+            setattr(self, 'target_'+target, PlayerDict[PlayerName][CurrentGW][target])
+            
+    def GWs(self, Range, PlayerName, PlayerDict, Attributes):
+        for x in Range:
+            for y in Attributes:
+                setattr(self, 'GW_'+str(x)+'_'+y, PlayerDict[PlayerName][x][y])

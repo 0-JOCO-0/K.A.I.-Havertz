@@ -7,8 +7,9 @@ Created on Sun Aug  8 23:37:11 2021
 
 from DataHandler import DataHandler
 from ML import ML
+from Points import Points
 
-class TeamPicker():
+class TeamPicker(ML):
     def __init__(self, FileName, TargetDict, Attributes, CurrentGW, Range):
         print('Initialising...')
         self.Data = DataHandler(FileName, CurrentGW-1, TargetDict, Range, Attributes)
@@ -25,13 +26,103 @@ class TeamPicker():
                 print(target)
                 setattr(self, position+'_rf_'+target, getattr(self, position+'ml').CreateModel(target, TargetDict[position]))
             print(position+' randoom forests established.')
+            self.df = self.Data.CreateDF([position], Attributes, [CurrentGW-1], None)
+            self.OneHotEncode()
+            for target in TargetDict[position]:
+                prediction_df = self.df.copy()
+                names = list(prediction_df.index)
+                prediction_list = getattr(self, position+'_rf_'+target).predict(prediction_df)
+                for i in (range(len(names))):
+                    setattr(getattr(self.Data,names[i]),target+'_prediction', prediction_list[i])
+            for PlayerName in names:
+                Player = getattr(self.Data, PlayerName)
+                xPoints = Points(Player, '_prediction')
+                Player.xP = xPoints
+                
         print('Finished Initialising.')
     
     #It would be sexy to add xP to everyone as an attribute in init...
     #rf.predict(test_features)
     #Currently we have a predictor for CurrentWeek but we want to apply it to CurrentWeek+1
     
-    #def Pick():
+    def Pick(self, squad):
+        GkXp = [Player.xP for Player in squad if Player.Position=='GK']
+        DefXp = [Player.xP for Player in squad if Player.Position=='DEF']
+        MidXp = [Player.xP for Player in squad if Player.Position=='MID']
+        FwdXp = [Player.xP for Player in squad if Player.Position=='FWD']
+        Gk = [Player for Player in squad if Player.Position=='GK']
+        Def = [Player for Player in squad if Player.Position=='DEF']
+        Mid = [Player for Player in squad if Player.Position=='MID']
+        Fwd = [Player for Player in squad if Player.Position=='FWD']
+        
+        for x in [GkXp,DefXp,MidXp,FwdXp,Gk,Def,Mid,Fwd]:
+            print(len(x))
+        
+        lineup=[]
+        lineup.append(self.topPlayer(Gk,GkXp))
+        lineup.append(self.topPlayer(Fwd,FwdXp))
+        for x in range(3):
+           lineup.append(self.topPlayer(Def,DefXp))
+           lineup.append(self.topPlayer(Mid,MidXp))
+        Outfield = Def+Mid+Fwd
+        OutfieldXp = DefXp+MidXp+FwdXp
+        for x in range(3):
+            lineup.append(self.topPlayer(Outfield,OutfieldXp))
+        
+        subs=[]
+        subs.append(self.topPlayer(Gk,GkXp))
+        for x in range(3):
+            subs.append(self.topPlayer(Outfield,OutfieldXp))
+        return [lineup,subs]
+
+        
+    def topPlayer(self, Players, XPs):
+        index = XPs.index(max(XPs))
+        Player = Players[index]
+        XPs.remove(XPs[index])
+        Players.remove(Players[index])
+        return(Player)
+        
+    def LineupPoints(self, Lineup):
+        Captain = None
+        CaptainXp = 0
+        Score = 0
+        ViceCaptain = None
+        for Player in Lineup:
+            if Player.xP > CaptainXp:
+                ViceCaptain = Captain
+                Captain = Player
+                CaptainXp = Player.xP
+            Score = Score+Player.xP
+        Score = Score + CaptainXp
+        return [Score, Captain, ViceCaptain]
+    
+    def BadInit(self, squad):
+        GkXp = [Player.xP for Player in squad if Player.Position=='GK']
+        DefXp = [Player.xP for Player in squad if Player.Position=='DEF']
+        MidXp = [Player.xP for Player in squad if Player.Position=='MID']
+        FwdXp = [Player.xP for Player in squad if Player.Position=='FWD']
+        Gk = [Player for Player in squad if Player.Position=='GK']
+        Def = [Player for Player in squad if Player.Position=='DEF']
+        Mid = [Player for Player in squad if Player.Position=='MID']
+        Fwd = [Player for Player in squad if Player.Position=='FWD']
+        
+        Gks=[]
+        Defs=[]
+        Mids=[]
+        Fwds=[]
+        for x in range(10):
+            Gks.append(self.topPlayer(Gk,GkXp))
+            Defs.append(self.topPlayer(Def,DefXp))
+            Mids.append(self.topPlayer(Mid,MidXp))
+            Fwds.append(self.topPlayer(Fwd,FwdXp))
+        return[Gks,Defs,Mids,Fwds]
+        
+   # def DreamTeam(self):
+    #    self.AllNames = list(Data.PlayerDict.
+        
+    
+    #def isSquadValid:
     
   #  def Points():
     

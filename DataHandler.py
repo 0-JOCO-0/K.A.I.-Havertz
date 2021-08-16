@@ -26,6 +26,7 @@ class DataHandler:
         self.Positions = ['GK','DEF','MID','FWD']
         self.PlayerDict = {x:{} for x in self.Positions}
         self.PlayerNames = []
+        self.PlayerList=[]
         self.CreatePlayerDict(CurrentGW, TargetDict, Range, Attributes)
     
     def CreatePlayerDict(self, CurrentGW, TargetDict, Range, Attributes):
@@ -52,14 +53,20 @@ class DataHandler:
                                                 Attributes))
                 except:
                     continue
+                self.PlayerList.append(getattr(self,PlayerName))
+    #def AddExpectedPointsToPlayers(self)
     
     def CreateDF(self, Positions, Attributes, Range, TargetDict):
         DF = []
         index = []
         for position in Positions:
-            columns = ['GW_'+str(x)+'_'+y for y in Attributes for x in Range] +[
-            'target_'+target for target in TargetDict[position]] + [
-                'Position', 'Team']
+            if TargetDict:
+                columns = ['GW_'+str(x)+'_'+y for y in Attributes for x in Range] +[
+                'target_'+target for target in TargetDict[position]] + [
+                    'Position', 'Team']
+            else:
+                columns = ['GW_'+str(x)+'_'+y for y in Attributes for x in Range] +[
+                    'Position', 'Team']
             for PlayerName in self.PlayerDict[position]:
                 PlayerAttributes = []
                 for x in Range:
@@ -72,10 +79,11 @@ class DataHandler:
                             continue
                 if len(PlayerAttributes) != (len(Range)*len(Attributes)):
                     continue
-                for target in TargetDict[position]:
-                    PlayerAttributes.append(getattr(
-                        getattr(self, PlayerName),
-                        'target_'+target))
+                if TargetDict:
+                    for target in TargetDict[position]:
+                        PlayerAttributes.append(getattr(
+                            getattr(self, PlayerName),
+                            'target_'+target))
                 PlayerAttributes.append(getattr(self, PlayerName).Position)
                 PlayerAttributes.append(getattr(self, PlayerName).Team)
                 DF.append(PlayerAttributes)

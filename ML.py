@@ -19,8 +19,9 @@ class ML:
         self.Split(target, targets)
         self.Learn()
         self.df = self.safe_df
-        self.Importances()
+        #self.Importances()
         return self.rf
+    
         
     def OneHotEncode(self):
         #print(self.df.shape)

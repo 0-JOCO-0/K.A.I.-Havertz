@@ -7,12 +7,13 @@ Created on Sun Aug  8 23:34:43 2021
 
 class Player:
     def __init__(self, PlayerName, PlayerDict, CurrentGW, Range, TargetDict, Attributes):
+        self.PlayerName = PlayerName
         self.Position = PlayerDict[PlayerName][CurrentGW]['position']
         self.Team = PlayerDict[PlayerName][CurrentGW]['team']
-        self.Value = PlayerDict[PlayerName][CurrentGW+1]['value']/10
+        #self.Value = PlayerDict[PlayerName][CurrentGW+1]['value']/10
         #Ultimately self.Value might come from different file!
         self.Targets(TargetDict, PlayerName, PlayerDict, CurrentGW)
-        self.GWs(Range, PlayerName, PlayerDict, Attributes)
+        self.GWs(Range+[CurrentGW], PlayerName, PlayerDict, Attributes)
 
     
     def Targets(self, TargetDict, PlayerName, PlayerDict, CurrentGW):

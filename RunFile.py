@@ -8,10 +8,11 @@ Created on Sun Aug  8 23:37:36 2021
 from Points import Points
 from DataHandler import DataHandler
 from TeamPicker import TeamPicker
+from knapsack import knapSack
 
 
 #%%
-FileName = "Fantasy-Premier-League\\data\\2020-21\\gws\\merged_gw.csv"
+FileName = "C:\\Users\\josep\\OneDrive\\Documents\\K.A.I. Havertz\\K.A.I.-Havertz\\merged_gw.csv"
 
 ##Add Pen;aties/Cards?
 TargetDict = {'GK':['bonus','clean_sheets','goals_conceded','minutes','saves'],
@@ -31,74 +32,135 @@ Attributes = ['xP','assists','bonus','bps','clean_sheets',
 
 #'kickoff_time'
 
-CurrentGW=39
+CurrentGW=15
 Range=[CurrentGW-2]
 #%%
 test = TeamPicker(FileName, TargetDict, Attributes, CurrentGW, Range)
 
 #%%
 Options = test.BadInit(test.Data.PlayerList)
-Gks = [x.PlayerName for x in Options[0]]
-Defs = [x.PlayerName for x in Options[1]]
-Mids = [x.PlayerName for x in Options[2]]
-Fwds = [x.PlayerName for x in Options[3]]
+for y in Options:
+        for x in y:
+                print(x.PlayerName)
+                print(x.xP)
 
-print(Gks)
-print(Defs)
-print(Mids)
-print(Fwds)
-Team = [Options[0][2],getattr(test.Data, 'Rúnar Alex Rúnarsson'),
-        Options[1][2],Options[1][3], Options[1][4], Options[1][6],getattr(test.Data,'Daniel Amartey'),
-        Options[2][1],Options[2][3],Options[2][4],Options[2][5],Options[2][7],
-        getattr(test.Data,'Michael Obafemi'),Options[3][1], Options[3][3]
-        ]
-print([x.PlayerName for x in Team])
-print([x.xP for x in Team])
-print([x.xP for x in Options[3]])
-#%%
-#Picked = (test.Pick(test.Data.PlayerList))
-Picked = test.Pick(Team)
-Lineup = [x.PlayerName for x in Picked[0]]
-Bench = [x.PlayerName for x in Picked[1]]
+squad = Options[0][:2]+Options[1][:5]+Options[2][:5]+Options[3][:3]
+print(len(squad))
+Picker = test.Pick(squad)
+print('First team:')
+for x in Picker[0]:
+        print(x.PlayerName)
+print('Bench:')
+for x in Picker[1]:
+        print(x.PlayerName)
+captain = test.LineupPoints(Picker[0])
+print('Expected Points: ', captain[0])
+print('Captain: ', captain[1].PlayerName)
+print('Vice-Captain: ', captain[2].PlayerName)
 
-print(Lineup)
-print(Bench)
-Pts = (test.LineupPoints([x for x in Picked[0]]))
-print(Pts[2].PlayerName)
-print(Pts[1].PlayerName)
-print(Pts[0])
 
-#%%
-print(len(test.Data.PlayerList))
-#%%
-def Curse():
-    for x in ['bonus','clean_sheets','goals_conceded','minutes',
-              'saves','assists','goals_scored','red_cards','yellow_cards',
-              'penalties_missed','penalties_saved']:
-        exec(f"global {x}; {x}=x")
-    print(bonus)
-    #exec(f"{x}")
-Curse()
-print(bonus)
-app = 'bon'
-exec("print(app)")
-#%%
-xPs=[1,4,6,3,2]
-print([(xPs.index(max(xPs)))])
-print([2*x for x in range(6) if x+1 in [1,3,5]])
-#%%
-n=pd.read_csv(FileName, index_col = 'name')
-print(n['goals_scored'])
-for x in n.iterrows():
-    for a in ((x[1].index).tolist()):
-        print(a)
-#%%
-columns = ['GW_'+str(x)+'_'+ y for y in Attributes for x in Range] + [
-        'Team', 'Position']
-print(columns)
-#%%
-"""['Bernd Leno', 'Jamie Vardy', 'Vladimir Coufal', 'Sadio Mané', 'Fabian Schär', 'Pablo Fornals', 'Rúben Santos Gato Alves Dias', 'Mohamed Salah', 'Nicolas Pépé', 'Juan Mata', 'Timo Werner']
-['Rúnar Alex Rúnarsson', 'Mason Holgate', 'Daniel Amartey', 'Michael Obafemi']
-Jamie Vardy
-Sadio Mané
-117.447"""
+List = test.Data.PlayerList
+print(len(List))
+#for x in List:
+ #       print(x.PlayerName, x.Value, x.xP)
+
+
+Current_team = ['Aaron Ramsdale', 'Edouard Mendy',
+                'Max Kilman', 'Reece James', 'Gabriel Magalhães', 'Matthew Cash', 'Andrew Robertson',
+                'Conor Gallagher', 'Callum Hudson-Odoi', 'Saïd Benrahma', 'Mohamed Salah', 'Declan Rice',
+                'Adam Armstrong', 'Che Adams', 'Cristiano Ronaldo dos Santos Aveiro']
+SQUAD=[]
+print("yeeeeeeeee")
+teams=[]
+for x in List:
+        if x.Team not in teams:
+                teams.append(x.Team)
+        if x.Team == 'Burnley':
+                print(x.PlayerName)
+print(teams)
+print(len(teams))
+print("******************************")
+for y in Current_team:
+            for x in List:
+                if x.PlayerName == y:
+                    SQUAD.append(x)
+Picker = test.Pick(SQUAD)
+print('First team:')
+for x in Picker[0]:
+        print(x.PlayerName)
+print('Bench:')
+for x in Picker[1]:
+        print(x.PlayerName)
+captain = test.LineupPoints(Picker[0])
+print('Expected Points: ', captain[0])
+print('Captain: ', captain[1].PlayerName)
+print('Vice-Captain: ', captain[2].PlayerName)
+print("******************************")
+sub =test.dream_subs(Current_team, test.Data.PlayerList)
+Picker = test.Pick(sub)
+print('First team:')
+for x in Picker[0]:
+        print(x.PlayerName)
+print('Bench:')
+for x in Picker[1]:
+        print(x.PlayerName)
+captain = test.LineupPoints(Picker[0])
+print('Expected Points: ', captain[0])
+print('Captain: ', captain[1].PlayerName)
+print('Vice-Captain: ', captain[2].PlayerName)
+print("******************************")
+
+new = [Player.PlayerName for Player in sub]
+
+next = test.dream_subs(new, test.Data.PlayerList)
+
+Picker = test.Pick(next)
+print('First team:')
+for x in Picker[0]:
+        print(x.PlayerName)
+print('Bench:')
+for x in Picker[1]:
+        print(x.PlayerName)
+captain = test.LineupPoints(Picker[0])
+print('Expected Points: ', captain[0])
+print('Captain: ', captain[1].PlayerName)
+print('Vice-Captain: ', captain[2].PlayerName)
+print("*****************************")
+new = [Player.PlayerName for Player in next]
+new = test.dream_subs(new, test.Data.PlayerList)
+
+Picker = test.Pick(new)
+print('First team:')
+for x in Picker[0]:
+        print(x.PlayerName)
+print('Bench:')
+for x in Picker[1]:
+        print(x.PlayerName)
+captain = test.LineupPoints(Picker[0])
+print('Expected Points: ', captain[0])
+print('Captain: ', captain[1].PlayerName)
+print('Vice-Captain: ', captain[2].PlayerName)
+print("*****************************")
+new = [Player.PlayerName for Player in new]
+new = test.dream_subs(new, test.Data.PlayerList)
+
+Picker = test.Pick(new)
+print('First team:')
+for x in Picker[0]:
+        print(x.PlayerName)
+print('Bench:')
+for x in Picker[1]:
+        print(x.PlayerName)
+captain = test.LineupPoints(Picker[0])
+print('Expected Points: ', captain[0])
+print('Captain: ', captain[1].PlayerName)
+print('Vice-Captain: ', captain[2].PlayerName)
+
+
+# Driver code
+val = [x.xP for x in List]
+wt = [int(10*x.Value) for x in List]
+W = 1000
+n = len(val)
+# This code is contributed by Suyash Saxena
+print(knapSack(W, wt, val, n))

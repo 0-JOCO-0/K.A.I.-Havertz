@@ -10,6 +10,7 @@ class Player:
         self.PlayerName = PlayerName
         self.Position = PlayerDict[PlayerName][CurrentGW]['position']
         self.Team = PlayerDict[PlayerName][CurrentGW]['team']
+        self.Value = PlayerDict[PlayerName][CurrentGW]['value']/10
         #self.Value = PlayerDict[PlayerName][CurrentGW+1]['value']/10
         #Ultimately self.Value might come from different file!
         self.Targets(TargetDict, PlayerName, PlayerDict, CurrentGW)

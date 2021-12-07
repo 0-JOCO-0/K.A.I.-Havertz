@@ -6,7 +6,7 @@ Created on Wed Aug 11 17:02:49 2021
 """
 
 class Manager:
-    def __init__:
-        self.CurrentSquad=[]
-        self.SpareMoney=0.0
-        self.FreeTransfers=0
+    def __init__(self,CurrentSquad,SpareMoney,FreeTransfers):
+        self.CurrentSquad=CurrentSquad
+        self.SpareMoney=SpareMoney
+        self.FreeTransfers=FreeTransfers

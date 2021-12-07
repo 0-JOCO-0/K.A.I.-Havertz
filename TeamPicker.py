@@ -23,7 +23,7 @@ class TeamPicker(ML):
             setattr(self, position+'ml', ML(df))
             print(position + ' ML established.')
             for target in TargetDict[position]:
-                print(target)
+                #print(target)
                 setattr(self, position+'_rf_'+target, getattr(self, position+'ml').CreateModel(target, TargetDict[position]))
             print(position+' randoom forests established.')
             self.df = self.Data.CreateDF([position], Attributes, [CurrentGW-1], None)
@@ -97,7 +97,7 @@ class TeamPicker(ML):
         Score = Score + CaptainXp
         return [Score, Captain, ViceCaptain]
     
-    def BadInit(self, squad):
+    def BadInit(self, squad, length=10):
         GkXp = [Player.xP for Player in squad if Player.Position=='GK']
         DefXp = [Player.xP for Player in squad if Player.Position=='DEF']
         MidXp = [Player.xP for Player in squad if Player.Position=='MID']
@@ -111,16 +111,66 @@ class TeamPicker(ML):
         Defs=[]
         Mids=[]
         Fwds=[]
-        for x in range(10):
+        for x in range(length):
             Gks.append(self.topPlayer(Gk,GkXp))
             Defs.append(self.topPlayer(Def,DefXp))
             Mids.append(self.topPlayer(Mid,MidXp))
             Fwds.append(self.topPlayer(Fwd,FwdXp))
         return[Gks,Defs,Mids,Fwds]
+
+    def dream_subs(self, current_team, options):
+        squad =[]
+        potentials = options.copy()
+        for y in current_team:
+            for x in potentials:
+                if x.PlayerName == y:
+                    squad.append(x)
+                    potentials.remove(x)
+        Tops=self.BadInit(potentials, length=1)
+        print(len(squad))
+        current = self.LineupPoints(squad)[0]
+        best = self.LineupPoints(squad)[0]
+        trial = squad.copy()
+        positions = ['GK','DEF','MID','FWD']
+        for x in range(4):
+            candidates = [Player for Player in squad if Player.Position==positions[x]]
+            for y in candidates:
+                trial.remove(y)
+                trial.append(Tops[x][0])
+                Score = self.LineupPoints(trial)[0]
+                if Score>best:
+                    new_squad=trial.copy()
+                    best=Score
+                    playerIn = Tops[x][0]
+                    playerOut = y
+                trial = squad.copy()
+        print("Bring in ",playerIn.PlayerName)
+        print("Take out ",playerOut.PlayerName)
+        print("Improvement = ", best-current)
+        return new_squad
+                
+
+
+
+
         
+    
+
+    """def Knapsack(self, money):
+        squad = self.Data.PlayerList
+        Gk = [Player for Player in squad if Player.Position=='GK']
+        Def = [Player for Player in squad if Player.Position=='DEF']
+        Mid = [Player for Player in squad if Player.Position=='MID']
+        Fwd = [Player for Player in squad if Player.Position=='FWD']
+        #bruteforce
+        for x in range(len(Gk))
+        trial = []
+        for i in len(Gk):
+            for j in Gk[:i]:
+                trial.append(Gk[i],Gk[j])
+"""
    # def DreamTeam(self):
     #    self.AllNames = list(Data.PlayerDict.
-        
     
     #def isSquadValid:
     

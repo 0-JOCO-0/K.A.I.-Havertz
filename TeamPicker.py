@@ -55,8 +55,8 @@ class TeamPicker(ML):
         Mid = [Player for Player in squad if Player.Position=='MID']
         Fwd = [Player for Player in squad if Player.Position=='FWD']
         
-        for x in [GkXp,DefXp,MidXp,FwdXp,Gk,Def,Mid,Fwd]:
-            print(len(x))
+        """for x in [GkXp,DefXp,MidXp,FwdXp,Gk,Def,Mid,Fwd]:
+            print(len(x))"""
         
         lineup=[]
         lineup.append(self.topPlayer(Gk,GkXp))
@@ -86,6 +86,7 @@ class TeamPicker(ML):
     def LineupPoints(self, Lineup):
         Captain = None
         CaptainXp = 0
+
         Score = 0
         ViceCaptain = None
         for Player in Lineup:
@@ -95,6 +96,12 @@ class TeamPicker(ML):
                 CaptainXp = Player.xP
             Score = Score+Player.xP
         Score = Score + CaptainXp
+        if not ViceCaptain:
+            CaptainXp=0
+            for Player in Lineup[1:]:
+                if Player.xP > CaptainXp:
+                    ViceCaptain = Player
+                    CaptainXp = Player.xP
         return [Score, Captain, ViceCaptain]
     
     def BadInit(self, squad, length=10):

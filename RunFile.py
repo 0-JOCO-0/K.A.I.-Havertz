@@ -32,13 +32,13 @@ Attributes = ['xP','assists','bonus','bps','clean_sheets',
 
 #'kickoff_time'
 
-CurrentGW=15
+CurrentGW=17
 Range=[CurrentGW-2]
 #%%
 test = TeamPicker(FileName, TargetDict, Attributes, CurrentGW, Range)
 
 #%%
-Options = test.BadInit(test.Data.PlayerList)
+"""Options = test.BadInit(test.Data.PlayerList)
 for y in Options:
         for x in y:
                 print(x.PlayerName)
@@ -47,6 +47,7 @@ for y in Options:
 squad = Options[0][:2]+Options[1][:5]+Options[2][:5]+Options[3][:3]
 print(len(squad))
 Picker = test.Pick(squad)
+print("No transfers:")
 print('First team:')
 for x in Picker[0]:
         print(x.PlayerName)
@@ -58,28 +59,30 @@ print('Expected Points: ', captain[0])
 print('Captain: ', captain[1].PlayerName)
 print('Vice-Captain: ', captain[2].PlayerName)
 
-
+"""
 List = test.Data.PlayerList
 print(len(List))
 #for x in List:
  #       print(x.PlayerName, x.Value, x.xP)
 
 
+
 Current_team = ['Aaron Ramsdale', 'Edouard Mendy',
-                'Max Kilman', 'Reece James', 'Gabriel Magalhães', 'Matthew Cash', 'Andrew Robertson',
-                'Conor Gallagher', 'Callum Hudson-Odoi', 'Saïd Benrahma', 'Mohamed Salah', 'Declan Rice',
-                'Adam Armstrong', 'Che Adams', 'Cristiano Ronaldo dos Santos Aveiro']
+                'Max Kilman', 'Reece James', 'Gabriel Magalhães', 'Matthew Lowton', 'Andrew Robertson',
+                'Conor Gallagher', 'Raphael Dias Belloli', 'Demarai Gray', 'Mohamed Salah', 'Declan Rice',
+                'Adam Armstrong', 'Emmanuel Dennis', 'Cristiano Ronaldo dos Santos Aveiro']
 SQUAD=[]
 print("yeeeeeeeee")
 teams=[]
-for x in List:
+"""for x in List:
         if x.Team not in teams:
                 teams.append(x.Team)
         if x.Team == 'Burnley':
                 print(x.PlayerName)
 print(teams)
-print(len(teams))
+print(len(teams))"""
 print("******************************")
+print("No subs:")
 for y in Current_team:
             for x in List:
                 if x.PlayerName == y:
@@ -96,6 +99,7 @@ print('Expected Points: ', captain[0])
 print('Captain: ', captain[1].PlayerName)
 print('Vice-Captain: ', captain[2].PlayerName)
 print("******************************")
+print("One sub:")
 sub =test.dream_subs(Current_team, test.Data.PlayerList)
 Picker = test.Pick(sub)
 print('First team:')
@@ -109,7 +113,7 @@ print('Expected Points: ', captain[0])
 print('Captain: ', captain[1].PlayerName)
 print('Vice-Captain: ', captain[2].PlayerName)
 print("******************************")
-
+print("Two subs:")
 new = [Player.PlayerName for Player in sub]
 
 next = test.dream_subs(new, test.Data.PlayerList)
@@ -126,6 +130,7 @@ print('Expected Points: ', captain[0])
 print('Captain: ', captain[1].PlayerName)
 print('Vice-Captain: ', captain[2].PlayerName)
 print("*****************************")
+print("Three subs:")
 new = [Player.PlayerName for Player in next]
 new = test.dream_subs(new, test.Data.PlayerList)
 
@@ -141,6 +146,7 @@ print('Expected Points: ', captain[0])
 print('Captain: ', captain[1].PlayerName)
 print('Vice-Captain: ', captain[2].PlayerName)
 print("*****************************")
+print("Four subs:")
 new = [Player.PlayerName for Player in new]
 new = test.dream_subs(new, test.Data.PlayerList)
 
